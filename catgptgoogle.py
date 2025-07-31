@@ -10,13 +10,13 @@ engine = pyttsx3.init()
 
 # Set env OPENAI_API_KEY
 
+# Initialize recognizer class (for recognizing speech)
+recognizer = sr.Recognizer()
+mic = sr.Microphone(device_index=1)
 
 def listen_for_question():
-    # Initialize recognizer class (for recognizing speech)
-    recognizer = sr.Recognizer()
-
     # Use the USB microphone for audio input
-    with sr.Microphone(device_index=1) as source:
+    with mic as source:
         print("Listening for a question...")
 
         # Adjust for ambient noise
@@ -63,8 +63,13 @@ def speak_answer_google(answer):
     tts.save("catanswer.mp3")
     os.system("mpg123 -a plughw:1,0 catanswer.mp3")
 
+def say_intro():
+    print("CATCAT saying intro")
+    os.system("mpg123 -a plughw:1,0 catwelcome2.mp3")
 
+    
 def main():
+    say_intro()
     while True:
         question = listen_for_question()
         if question:

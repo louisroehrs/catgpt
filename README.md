@@ -88,3 +88,50 @@ pip install gTTS
 
 gtts-cli --all shows all the languages....
 
+
+
+RASPBERRY PI SOUND SETTINGS:
+
+
+In /etc/modprobe.d/alsa-base.conf
+
+add:
+options snd-usb-audio index=1
+
+In /etc/asound.conf
+
+add:
+defaults.pcm.card 1
+defaults.ctl.card 1
+
+Then
+sudo reboot
+
+
+
+
+Before running the script, do:
+
+. ~/.bash_profile
+
+  to set the open ai key
+
+then:
+
+python3 catgptgoogle.py
+
+
+
+Rebootable service:
+
+using systemctl with /lib/systemd/system/catgpt.service
+
+
+
+
+
+
+
+
+
+
