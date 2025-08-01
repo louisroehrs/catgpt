@@ -183,7 +183,7 @@ m the USB mic. Before we can get started with ‘pyaudio,’ we need to ensure t
 es:
 
 sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-d\
-ev
+ev flac
 sudo apt install alsa-utils
 sudo apt install mpg123
 
