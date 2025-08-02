@@ -1,132 +1,3 @@
-https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone
-
-lsusb -t
-
-
-
-This output lets us know the Pi is reading the USB microphone because of its response: “Class=Audio, Driver=snd-usb-audio” - and if you are seeing a similar response, then congratulations! Your USB mic is ready to go. The Pi isn’t quite ready to use the USB mic, but I will discuss this in the next section.
-
-We will be using the Python library ‘pyaudio’ to record and play audio data from the USB mic. Before we can get started with ‘pyaudio,’ we need to ensure that the RPi has all the necessary prerequisites by installing the following packages:
-
-sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-dev
-
-If the above is successful, then we can download the ‘pyaudio’ library (I’m installing to Python 3.x with ‘pip3’):
-
-sudo pip3 install pyaudio
-
-Assuming the two installs above have been successful, open Python 3.x and import pyaudio. If everythin has been successful, we are ready to head to the next section and ensure that the USB mic is functioning and the Pi has selected the correct device.
-
-Testing the USB Mic and Pyaudio
-
-do python3 and use the interactive thing.
-
-
-import pyaudio
-p = pyaudio.PyAudio()
-for ii in range(p.get_device_count()):
-    print(p.get_device_info_by_index(ii).get('name'))
-
-Get lots of stuff and then:
-
-vc4-hdmi: MAI PCM i2s-hifi-0 (hw:0,0)
-USB PnP Sound Device: Audio (hw:1,0)
-sysdefault
-hdmi
-pulse
-default
-
-Take a note of the index.   In this case, it is 1 (the second in the list)
-
-
-So, let's try a newer page....
-
-
-https://thelinuxcode.com/record-audio-with-raspberry-pi/
-
-sudo nano /boot/config.txt
-
-
-
-sudo apt install alsa-utils
-alsamixer
-
-install an editor:
-sudo apt install audacity
-
-
-sound card properties and capabilities:
-
-cat /proc/asound/cards
-
-Choosing an available card and looking at its capabilities :
-
-cat /proc/asound/card1/stream0
-
-
-
-for espeak:
-
-
-sudo apt update && sudo apt install espeak-ng libespeak1
-
-
-
-forget espeak,  trying piper ....
-
-pip install piper-tts
-
-pip[er wont work on raspberry pi 2 according to docs...
-
-
-trying google tts gTTS....
-
-
-sudo apt install mpg123
-
-pip install gTTS
-
-
-gtts-cli --all shows all the languages....
-
-
-
-RASPBERRY PI SOUND SETTINGS:
-
-
-In /etc/modprobe.d/alsa-base.conf
-
-add:
-options snd-usb-audio index=1
-
-In /etc/asound.conf
-
-add:
-defaults.pcm.card 1
-defaults.ctl.card 1
-
-Then
-sudo reboot
-
-
-
-
-Before running the script, do:
-
-. ~/.bash_profile
-
-  to set the open ai key
-
-then:
-
-python3 catgptgoogle.py
-
-
-
-Rebootable service:
-
-using systemctl with /lib/systemd/system/catgpt.service
-
-
 # Talking and Dancing CatGPT
 
 ## Overview
@@ -195,53 +66,45 @@ If you want emacs, install it with:
 Open emacs with `emacs -nw` if you want to edit in the terminal window instead of the X display window.
 
 
-Get the catgpt source code.  Create or cd into your projects directory.
+## Get the catgpt source code.  
+Create or cd into your projects directory.
 Clone the repository from github. It will create the catgpt directory and put the code inside it.
 
 `git clone https://github.com/louisroehrs/catgpt.git`
 
 `cd catgpt`
 
+The catgpt source code includes tests so that we can verify each step of the process and the relevant hardware connections.
 
+Check the version of python that should already be installed with the Raspberry Pi OS.
 
-Configure Raspberry Pi Audio to work with a plugin USB sound device that will s\
-upport a 3.5mm microphone input and a 3.5mm audio output.  This involves config\
-uring the alsa sound drivers.
+`python --version`
 
-Python comes installed as part of Raspberry OS.  We are using python 3.9.2.  Ch\
-eck python version with:
+It should be version 3.9.2 or higher.
 
-`python version`
+## CatGPT architecture
+
+We will now take a paws and explain the architecture.
 
 There are three parts to making a cat talk.
 
-First, he needs to listen and translate the audio to text.  We will use google \
-for that.
+First, he needs to listen and translate the audio to text.  We will use Google Speech-to-Text for that.  Free as of this writing with no need for an API key.
 
-Then, he needs to use his brain.  For this part, we will send the text as a pro\
-mpt with some system instructions to the LLM of our choice.  Here we are using \
-the hosted OpenAI service.  Do not get personal with the cat as Microsoft and t\
-he world will be listening in.
+Then, he needs to use his brain.  For this part, we will send the text as a prompt with some system instructions to the LLM of our choice.  Here we are using the hosted OpenAI service.  Do not get too personal with the cat if you are using a hosted LLM as Microsoft and the world will be listening in.  This software is using OpenAI and you will need to set and export your OpenAI Api Key as an environment variable OPENAI_API_KEY.
 
-Next, we will get back a text response and the cat will need to speak it.  We w\
-ill use the Google Text-to-Speech service, gTTS.
+Next, we will get back a text response and the cat will need to speak it.  We will use the Google Text-to-Speech service, gTTS.
 
-The great thing is that there are python libraries that support all of these st\
-eps.
+## Install the sound drivers for the OS and the python libraries to connect to them.
 
-The first thing we need to do is install some libraries at the OS level to supp\
-ort this.
+The great thing is that there are python libraries that support all of these steps.
 
-We will be using the Python library ‘pyaudio’ to record and play audio data fro\
-m the USB mic. Before we can get started with ‘pyaudio,’ we need to ensure that\
- the RPi has all the necessary prerequisites by installing the following packag\
-es:
+The first thing we need to do is install some libraries at the OS level to support this.
 
-sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-d\
-ev flac
-sudo apt install alsa-utils
-sudo apt install mpg123
+We will be using the Python library ‘pyaudio’ to record and play audio data from the USB mic. Before we can get started with ‘pyaudio,’ we need to ensure that the RPi has all the necessary prerequisites by installing the following packages:  This code will use the alsa sound drivers and mpg123 to play the response.
 
+`sudo apt-get install libportaudio0 libportaudio2 libportaudiocpp0 portaudio19-dev flac`
+`sudo apt install alsa-utils`
+`sudo apt install mpg123`
 
 Next we can install the python libraries.
 
@@ -249,28 +112,151 @@ Do a pip install to get them all.
 
 `pip install -r requirements.txt`
 
-Now we need to configure the audio.  The python code refers to the audio device\
- using an index such as 0, 1, 2.  We need to find that index and set it.
+## Configure the audio
+
+### Find the device id for the USB Audio Device
+
+Now we need to configure the audio.  The python code refers to the audio device using an index such as 0, 1, 2.  We need to find that index and set it.
+
+Run the following script to find the device id for the USB AUdio Device.
+
+`python find_device_id.py`
+
+You may see a bunch of ALSA messages, let that scroll.
+
+At the bottom you should see an indexed list of audio devices.
+
+Find the line that mentions the USB Audio Device and note the number preceding the device name; that is the index number.
+
+Now we can configure the Raspberry Pi Audio.
+
+## Configure the Raspberry Pi Sound Settings
+
+We will edit the OS configuration files. You may need to start your editor with `sudo` to edit these files.
+
+In `/etc/modprobe.d/alsa-base.conf`
+
+add the line:
+
+`options snd-usb-audio index=<index number>`
+
+where \<index number\> is the index found in the previous section.
+
+Example:
+
+`options snd-usb-audio index=1`
 
 
-Testing the USB Mic and Pyaudio
+In `/etc/asound.conf`
 
-do python3 and use the interactive thing.
+add:
+
+```
+defaults.pcm.card <index number>
+defaults.ctl.card <index number>
+```
+where \<index number> is the index found in the previous section.
+
+Example:
+```
+defaults.pcm.card 1
+defaults.ctl.card 1
+```
+
+Then reboot the raspberry pi for the settings to take effect.
+
+`sudo reboot`
+
+## Setup your open api key.
+
+For ease of use and the ability to have the Raspberry Pi start up and beginning talking without using a keyboard, monitor, and mouse, it is recommended to set the OPENAI_API_KEY in file that can be sourced.
+
+To do this, create a file called `.bash_profile` in the user's root directory and add the following line, replacing the \<your openai api key> with your key:
+`export OPENAI_API_KEY=<your openai api key>`
 
 
-import pyaudio
-p = pyaudio.PyAudio()
-for ii in range(p.get_device_count()):
-    print(p.get_device_info_by_index(ii).get('name'))
+
+## Let's give it a go!
+
+Run `./start.sh`.
+
+You may see lots of ALSA output and then the line:
+
+`Listening for a question...`
+
+Pick up and speak into the mic slowly your question and pause.
+
+The next line should read 
+
+`CATCAT Recognizing...`
+
+And if the speech is recognized it should say:
+
+`CATCAT Question: <an interpretation of your question from the speech recognizer>`
+
+If you see instead:
+
+`CATCAT Sorry, I did not understand that`
+
+it means that the sound did get sent to Google and Google could not translate it into text.  You may want to speak slower, closer to the microphone and in a quieter location.
+
+Give it a couple of tries.
+
+If you got the line showing `Question`, you should see a line beginning with:
+`CATCAT Answer: <your answer with a possible MEOW included>`
+
+If not, check to make sure your OPENAI_API_KEY is set correctly in the ~/.bash_profile file.
+
+If you see: `sh: 1: mpg123: not found`, do `sudo apt install mpg123`
+
+To quit the program, type a `CTRL-c` once or twice.
+
+# Troubleshooting.
+
+On the Raspbarry Pi desktop, make sure the speaker volume is set to maximum.
+
+Make sure the microphone input is set to USB Audio Device.
+
+# Make it run on startup.
+
+We have already created a service file at catgpt.service in the same directory.
+
+Change to the catgpt directory and run the following to make the service start up on boot.
+
+```
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable myscript.service
+```
+
+This will add the file into `/etc/systemd/system/multi-user.target.wants/catgpt.service`
+
+Now you can start the service with either:
+
+`sudo systemctl start myscript.service`
+
+or reboot.
+
+`sudo reboot`
+
+Remember, though, the cats will listen and consume your money at openai.com while running.  But this will let you run the cats headless.
+
+To see the logs:
+
+`journalctl -u myscript.service -b`
+
+Breakdown:
+
+ -u myscript.service: filters for your service
+
+ -b: only show logs from this boot
+
+You can follow logs in real time with:
+
+`journalctl -u myscript.service -f`
 
 
+# References
 
 
-
-
-
-
-
-
-
-
+* https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone

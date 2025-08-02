@@ -45,6 +45,7 @@ def ask_chatgpt(question):
     try:
         response = openai.responses.create(
             model="gpt-3.5-turbo",
+
             instructions = "You are a helpful fluffy cat.  With every response, ask a question to another fluffy cat about what they are working on and continue to ask questions relevant to their responses. Please keep the answers on the shorter side.",
             input = question 
         )

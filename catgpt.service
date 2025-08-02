@@ -1,0 +1,14 @@
+[Unit]
+Description=CatGPT
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/home/pi/Documents/catgpt
+ExecStart=/home/pi/Documents/catgpt/start.sh
+Restart=always
+User=pi
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
