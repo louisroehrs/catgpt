@@ -127,27 +127,82 @@ Rebootable service:
 using systemctl with /lib/systemd/system/catgpt.service
 
 
-New install.
+# Talking and Dancing CatGPT
 
+## Overview
 
-Fire up the raspberry pi.
-Connect to the internet.
-Open terminal.
+Written for the Raspberry Pi 2 Model B in python and Raspberry Pi OS as of June 30, 2025, this code will automate a dancing cat.  When the cat speaks, it dances. Otherwise, it listens attentively to what you say.  When you are done speaking, it will respond.
+
+It uses google services for the speech-to-text and the text-to-speech conversion and OpenAI for generating responses to the questions. 
+
+## Requirements for Dancing Cat Mode
+
+Once the Raspberry Pi is setup, this is all that is needed to make the Dancing Cat go.
+
+1. Raspberry Pi 2 Model B and 5V 2Amp power supply.
+1. SD Card for Raspberry Pi
+2. Ethernet adapter for the Raspberry Pi.  Tested with EdiMax wireless mini-dongle
+2. USB Audio Device that will provide audio output and microphone input.  This software is set to use 44100Hz data rate and maybe change to match your audio device.
+3. Microphone that plugs in to the USB Audio Device.  Ideally, the microphone should be able to pick up your voice at some distance for best effect of a listening cat.  Otherwise, you will need to hold the microphone close to the speaker's mouth.
+4. Speaker.  The Dancing Cat supplies the speaker and amplifier that should be connected to the USB Audio Device audio output port to speak the responses.
+5. Batteries for Dancing Cat.
+6. Dancing Cat from EBay (or an amplified speaker and a robot of your choice)
+6. You will need an Open AI Api Key to use this software.
+
+## Requirements for setting up the Raspberry Pi
+
+In addition to the above, you will need:
+1. USB Keyboard plugged into the Raspberry Pi
+2. USB Mouse plugged into the Raspberry Pi
+3. HDMI Monitor plugged into the Raspberry Pi with HDMI - HDMI cable.
+
+# Setup
+
+Assemble the Rapsberry Pi with USB Mouse, USB Keyboard, USB Network adapter or Ethernet connected to the Internet, USB Audio device with mic and speaker (dancing cat) plugged in.
+
+## SD Card
+
+Use the official Raspberry Pi imager at https://www.raspberrypi.com/software/ to image the SD card on any machine that runs the imager and supports SD cards. I selected this version of the OS in the imager:
+`Raspberry Pi OS (Legacy, 32-bit) A port of Debian Bullseye with security updates and desktop environment.  Released 2025-05-06.`
+
+Put the SD Card into the Raspberry Pi.
+
+## Power up
+Plug the Raspberry Pi in to power (the mains, as the Brits call it).
+It should startup and present a desktop interface.
+
+## Connect to the internet.
+
+Make sure the Ethernet cable or wifi dongle is connected to the Raspberry Pi. It should setup plug and play style.  For wifi, it should show a wireless icon at the top right of the desktop.  Click that to select a wifi network that is connected to the internet.  
+
+## Setup the software.
+
+You will need to be connected to the internet to proceed.
+
+Open a terminal window by click the >_ icon on the top left of the screen.
+We will be doing most of the work in the terminal.
+
 Let's get the latest and greatest Raspberry Pi OS.  This was done June 31, 2025\
  for these instructions.
 
-sudo apt full-upgrade
+`sudo apt full-upgrade`
+
+You will need your favorite text editor to continue. `nano` and `vi` are installed. `emacs` is not. I use emacs...
+
+If you want emacs, install it with:
+`sudo apt-get install emacs`
+
+Open emacs with `emacs -nw` if you want to edit in the terminal window instead of the X display window.
 
 
-I install emacs with:
-  sudo apt-get install emacs
+Get the catgpt source code.  Create or cd into your projects directory.
+Clone the repository from github. It will create the catgpt directory and put the code inside it.
+
+`git clone https://github.com/louisroehrs/catgpt.git`
+
+`cd catgpt`
 
 
-Get the source.  cd to a directory that will contain the source directory.
-git clone https://github.com/louisroehrs/catgpt.git
-
-Switch to the working branch.
-git checkout master
 
 Configure Raspberry Pi Audio to work with a plugin USB sound device that will s\
 upport a 3.5mm microphone input and a 3.5mm audio output.  This involves config\
