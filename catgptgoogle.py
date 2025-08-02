@@ -17,15 +17,15 @@ def listen_for_question():
         print("Listening for a question...")
 
         # Adjust for ambient noise
-        recognizer.adjust_for_ambient_noise(source, duration=1)
-
+#        recognizer.adjust_for_ambient_noise(source, duration=1)
+        recognizer.energy_threshold = 200
         # Listen for the audio and record it
         audio = recognizer.listen(source)
 
         try:
             # Recognize speech using Google Speech Recognition
             print("CATCAT Recognizing...")
-            question = recognizer.recognize_google(audio)
+            question = recognizer.recognize_openai(audio)
             print(f"CATCAT Question: {question}")
             return question
         except sr.UnknownValueError:
@@ -39,7 +39,7 @@ def ask_chatgpt(question):
     try:
         response = openai.responses.create(
             model="gpt-3.5-turbo",
-            instructions = "You are a helpful fluffy cat.",
+            instructions = "You are a helpful fluffy cat.  With every response, ask a question to another fluffy cat about what they are working on and continue to ask questions relevant to their responses.",
             input = question 
         )
 
