@@ -1,4 +1,4 @@
-https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone
+
 
 lsusb -t
 
@@ -340,9 +340,52 @@ If you see: `sh: 1: mpg123: not found`, do `sudo apt install mpg123`
 
 To quit the program, type a `CTRL-c` once or twice.
 
-## Troubleshooting.
+# Troubleshooting.
 
 On the Raspbarry Pi desktop, make sure the speaker volume is set to maximum.
 
 Make sure the microphone input is set to USB Audio Device.
 
+# Make it run on startup.
+
+We have already created a service file at catgpt.service in the same directory.
+
+Change to the catgpt directory and run the following to make the service start up on boot.
+
+```
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable myscript.service
+```
+
+This will add the file into `/etc/systemd/system/multi-user.target.wants/catgpt.service`
+
+Now you can start the service with either:
+
+`sudo systemctl start myscript.service`
+
+or reboot.
+
+`sudo reboot`
+
+Remember, though, the cats will listen and consume your money at openai.com while running.  But this will let you run the cats headless.
+
+To see the logs:
+
+`journalctl -u myscript.service -b`
+
+Breakdown:
+
+ -u myscript.service: filters for your service
+
+ -b: only show logs from this boot
+
+You can follow logs in real time with:
+
+`journalctl -u myscript.service -f`
+
+
+# References
+
+
+* https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone
