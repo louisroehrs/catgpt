@@ -1,14 +1,11 @@
 import speech_recognition as sr
 import openai
-import pyttsx3
 import time
 import os
 from gtts import gTTS
 
-# Initialize text-to-speech engine
-engine = pyttsx3.init()
 
-# Set env OPENAI_API_KEY
+# Set env OPENAI_API_KEY variable in your environment
 
 # Initialize recognizer class (for recognizing speech)
 recognizer = sr.Recognizer()
@@ -51,11 +48,6 @@ def ask_chatgpt(question):
     except Exception as e:
         print(f"CATCAT Error contacting OpenAI: {e}")
         return None
-
-def speak_answer(answer):
-    print(f"CATCAT Answer: {answer}")
-    engine.say(answer)
-    engine.runAndWait()
 
 def speak_answer_google(answer):
     print(f"CATCAT Answer: {answer}")
