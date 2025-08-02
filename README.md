@@ -245,7 +245,7 @@ Remember, though, the cats will listen and consume your money at openai.com whil
 
 To see the logs:
 
-`journalctl -u myscript.service -b`
+`journalctl -u catgpt.service -b`
 
 Breakdown:
 
@@ -255,7 +255,7 @@ Breakdown:
 
 You can follow logs in real time with:
 
-`journalctl -u myscript.service -f`
+`journalctl -u catgpt.service -f`
 
 
 # References
