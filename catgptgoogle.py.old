@@ -1,0 +1,67 @@
+import speech_recognition as sr
+import openai
+import pyttsx3
+import time
+
+# Initialize text-to-speech engine
+# engine = pyttsx3.init()
+
+# Set up OpenAI API key (replace with your key)
+openai.api_key = 'your-openai-api-key-here'
+
+def listen_for_question():
+    # Initialize recognizer class (for recognizing speech)
+    recognizer = sr.Recognizer()
+
+    # Use the USB microphone for audio input
+    with sr.Microphone(device_index=1) as source:
+        print("Listening for a question...")
+
+        # Adjust for ambient noise
+        recognizer.adjust_for_ambient_noise(source, duration=1)
+
+        # Listen for the audio and record it
+        audio = recognizer.listen(source)
+
+        try:
+            # Recognize speech using Google Speech Recognition
+            print("CATCAT Recognizing...")
+            question = recognizer.recognize_google(audio)
+            print(f"CATCAT Question: {question}")
+            return question
+        except sr.UnknownValueError:
+            print("CATCAT Sorry, I did not understand that.")
+            return None
+        except sr.RequestError:
+            print("CATCAT Could not request results from Google Speech Recognition service.")
+            return None
+
+def ask_chatgpt(question):
+    try:
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=question,
+            max_tokens=150
+        )
+        answer = response.choices[0].text.strip()
+        return answer
+    except Exception as e:
+        print(f"CATCAT Error contacting OpenAI: {e}")
+        return None
+
+def speak_answer(answer):
+    print(f"CATCAT Answer: {answer}")
+    engine.say(answer)
+    engine.runAndWait()
+
+def main():
+    while True:
+        question = listen_for_question()
+        if question:
+            answer = ask_chatgpt(question)
+            if answer:
+                speak_answer(answer)
+        time.sleep(1)  # Avoid continuous loop too fast
+
+if __name__ == "__main__":
+    main()
