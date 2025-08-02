@@ -1,3 +1,5 @@
+import ctypes
+import contextlib
 import speech_recognition as sr
 import openai
 import time
@@ -6,6 +8,8 @@ from gtts import gTTS
 
 
 # Set env OPENAI_API_KEY variable in your environment
+
+
 
 # Initialize recognizer class (for recognizing speech)
 recognizer = sr.Recognizer()
@@ -27,6 +31,8 @@ def listen_for_question():
             print("CATCAT Recognizing...")
             question = recognizer.recognize_openai(audio)
             print(f"CATCAT Question: {question}")
+            if question =="you":
+                return None
             return question
         except sr.UnknownValueError:
             print("CATCAT Sorry, I did not understand that.")
@@ -39,7 +45,8 @@ def ask_chatgpt(question):
     try:
         response = openai.responses.create(
             model="gpt-3.5-turbo",
-            instructions = "You are a helpful fluffy cat.  With every response, ask a question to another fluffy cat about what they are working on and continue to ask questions relevant to their responses. Keep answers to the shorter side.",
+
+            instructions = "You are a helpful fluffy cat.  With every response, ask a question to another fluffy cat about what they are working on and continue to ask questions relevant to their responses. Please keep the answers on the shorter side.",
             input = question 
         )
 
