@@ -1,5 +1,6 @@
 import ctypes
 import contextlib
+import sounddevice  #removes ALSA error logging
 import speech_recognition as sr
 import openai
 import time

@@ -233,7 +233,7 @@ This will add the file into `/etc/systemd/system/multi-user.target.wants/catgpt.
 
 Now you can start the service with either:
 
-`sudo systemctl start myscript.service`
+`sudo systemctl start catgpt.service`
 
 or reboot.
 
@@ -243,7 +243,7 @@ Remember, though, the cats will listen and consume your money at openai.com whil
 
 To see the logs:
 
-`journalctl -u myscript.service -b`
+`journalctl -f -u catgpt.service`
 
 Breakdown:
 
@@ -253,10 +253,33 @@ Breakdown:
 
 You can follow logs in real time with:
 
-`journalctl -u myscript.service -f`
+`journalctl -f -u catgpt.service`
+
+Can stop with:
+
+sudo systemctl stop catgpt.service
+
+
+
+HARDWARE:
+
+Plug the audio cable into the lower USB port under the microphone logo.
+
+USB:
+
+|-----------|----------|
+| mouse     | WIFI     |
+|-----------|----------|
+| AUDIO     | keyboard |
+|-----------|----------|
+
 
 
 # References
 
 
 * https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone
+
+
+
+# importing sounddevice stops all the ALSA messages.  

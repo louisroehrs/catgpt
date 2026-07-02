@@ -1,5 +1,6 @@
 import openai
 import pyaudio
+import sounddevice  #removes ALSA error logging
 import wave
 import pyttsx3
 import time
@@ -10,7 +11,7 @@ import subprocess
 openai.api_key = ' key '
 model = "gpt-3.5-turbo"
 AUDIO_FILENAME = "input.wav"
-RECORD_SECONDS = 4
+RECORD_SECONDS = 8
 SAMPLE_RATE = 44100
 CHUNK = 8000
 CHANNELS = 1

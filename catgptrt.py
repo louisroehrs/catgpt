@@ -1,3 +1,9 @@
+import openai
+import sounddevice as sd
+# import numpy as np
+import queue
+import base64
+
 import ctypes
 import contextlib
 import speech_recognition as sr
@@ -7,8 +13,12 @@ import os
 from gtts import gTTS
 
 
-# Set env OPENAI_API_KEY variable in your environment
+print ("Running catgptrt.py")
 
+SAMPLERATE = 44000
+
+# Set env OPENAI_API_KEY variable in your environment
+client = openai.OpenAI()
 
 
 # Initialize recognizer class (for recognizing speech)
@@ -43,6 +53,22 @@ def listen_for_question():
             print("CATCAT Could not request results from Google Speech Recognition service.")
             return None
 
+# realtime
+def ask_gpt_and_speak_response (question):
+    with client.chat.completions.stream(
+            model="gpt-4o",
+            modalities= ["text","audio"],
+            audio = {"format" : "pcm16", "voice" : "verse"},
+            messages = [{"role": "user", "content": question}]
+            ) as stream:
+                for event in stream:
+                    if event.type == "response.output_audio.delta":
+#                        pcm_bytes = event.delta
+#                        audio_array = np.frombuffer(pcm_bytes, dtype=np.int16)
+                        sd.play(event.delta) # , samplerate = SAMPLERATE)
+                        sd.wait()
+
+    
 def ask_chatgpt(question):
     try:
         response = openai.responses.create(
@@ -69,7 +95,7 @@ def say_intro():
     os.system("mpg123 -a plughw:1,0 catwelcome2.mp3")
 
     
-def main():
+def main_old():
     say_intro()
     while True:
         question = listen_for_question()
@@ -77,6 +103,15 @@ def main():
             answer = ask_chatgpt(question)
             if answer:
                 speak_answer_google(answer)
+        time.sleep(1)  # Avoid continuous loop too fast
+
+def main():
+#    say_intro()
+    while True:
+        question = listen_for_question()
+        print(f"Question: {question}")
+        if question:
+            answer = ask_gpt_and_speak_response(question)
         time.sleep(1)  # Avoid continuous loop too fast
 
 if __name__ == "__main__":
