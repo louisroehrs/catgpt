@@ -223,13 +223,15 @@ We have already created a service file at catgpt.service in the same directory.
 
 Change to the catgpt directory and run the following to make the service start up on boot.
 
+
+Sudo copy the `catgpt.service` to `/etc/systemd/system/`
+
 ```
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
-sudo systemctl enable myscript.service
+sudo systemctl enable catgpt.service
 ```
 
-This will add the file into `/etc/systemd/system/multi-user.target.wants/catgpt.service`
 
 Now you can start the service with either:
 
@@ -243,7 +245,9 @@ Remember, though, the cats will listen and consume your money at openai.com whil
 
 To see the logs:
 
+
 `journalctl -f -u catgpt.service`
+
 
 Breakdown:
 
@@ -252,6 +256,7 @@ Breakdown:
  -b: only show logs from this boot
 
 You can follow logs in real time with:
+
 
 `journalctl -f -u catgpt.service`
 
@@ -272,7 +277,6 @@ USB:
 |-----------|----------|
 | AUDIO     | keyboard |
 |-----------|----------|
-
 
 
 # References
