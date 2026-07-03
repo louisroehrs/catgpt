@@ -245,7 +245,9 @@ Remember, though, the cats will listen and consume your money at openai.com whil
 
 To see the logs:
 
-`journalctl -u catgpt.service -b`
+
+`journalctl -f -u catgpt.service`
+
 
 Breakdown:
 
@@ -255,10 +257,57 @@ Breakdown:
 
 You can follow logs in real time with:
 
-`journalctl -u catgpt.service -f`
+
+`journalctl -f -u catgpt.service`
+
+Can stop with:
+
+sudo systemctl stop catgpt.service
+
+
+
+HARDWARE:
+
+Plug the audio cable into the lower USB port under the microphone logo.
+
+USB:
+
+|-----------|----------|
+| mouse     | WIFI     |
+|-----------|----------|
+| AUDIO     | keyboard |
+|-----------|----------|
 
 
 # References
 
 
 * https://makersportal.com/blog/2018/8/23/recording-audio-on-the-raspberry-pi-with-python-and-a-usb-microphone
+
+
+
+# importing sounddevice stops all the ALSA messages.
+
+
+
+#### Switching to piper for local tts for faster responses.
+
+Curl won't work.
+
+Browse to https://github.com/rhasspy/piper and get the release for 2023.11.14-2/piper_linux_arm7l.tar.gz for raspberry pi 2 model b
+
+
+Download. Extract to piper folder.
+
+Get a voice model from huggingface with browser.
+
+wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/low/en_US-lessac-low.onnx
+wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/low/en_US-lessac-low.onnx.json
+
+
+Test.
+echo "woof" | ./piper -m en_US-lessac-low.onnx --debug
+Spits out a file.
+aplay the timestamped file.
+
+

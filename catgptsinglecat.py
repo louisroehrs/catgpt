@@ -1,15 +1,19 @@
 import ctypes
 import contextlib
+import sounddevice  #removes ALSA error logging
 import speech_recognition as sr
 import openai
+import logging
 import time
 import os
 from gtts import gTTS
 
+logging.basicConfig(level=logging.INFO)
+
+
+logger = logging.getLogger("Fluffy cat")
 
 # Set env OPENAI_API_KEY variable in your environment
-
-
 
 # Initialize recognizer class (for recognizing speech)
 recognizer = sr.Recognizer()
@@ -20,7 +24,7 @@ def listen_for_question():
     mic = sr.Microphone(device_index=1)
 
     with mic as source:
-        print("Listening for a question...")
+        logger.info("Listening for a question...")
 
         # Adjust for ambient noise
 #        recognizer.adjust_for_ambient_noise(source, duration=1)
@@ -29,43 +33,44 @@ def listen_for_question():
         audio = recognizer.listen(source)
 
         try:
-            # Recognize speech using Google Speech Recognition
-            print("CATCAT Recognizing...")
+            # Recognize speech using Open AI Speech Recognition
+            logger.info("Recognizing...")
             question = recognizer.recognize_openai(audio)
-            print(f"CATCAT Question: {question}")
+            logger.info(f"Question: {question}")
             if question =="you":
+
                 return None
             return question
         except sr.UnknownValueError:
-            print("CATCAT Sorry, I did not understand that.")
+            logger.info("Sorry, I did not understand that.")
             return None
         except sr.RequestError:
-            print("CATCAT Could not request results from Google Speech Recognition service.")
+            logger.info("Could not request results from Google Speech Recognition service.")
             return None
 
 def ask_chatgpt(question):
     try:
         response = openai.responses.create(
-            model="gpt-3.5-turbo",
+            model="gpt-5-nano",
 
-            instructions = "You are a helpful fluffy cat.  With every response, ask a question to another fluffy cat about what they are working on and continue to ask questions relevant to their responses. Please keep the answers on the shorter side.",
+            instructions = "You are a helpful fluffy cat named Lorenzo.  Start by asking a question about what they are working on and continue to ask questions relevant to their responses. Please keep the answers on the shorter side.",
             input = question 
         )
 
         answer = response.output_text
         return answer
     except Exception as e:
-        print(f"CATCAT Error contacting OpenAI: {e}")
+        logger.info(f"Error contacting OpenAI: {e}")
         return None
 
 def speak_answer_google(answer):
-    print(f"CATCAT Answer: {answer}")
+    logger.info(f"Answer: {answer}")
     tts = gTTS(answer)
     tts.save("catanswer.mp3")
     os.system("mpg123 -a plughw:1,0 catanswer.mp3")
 
 def say_intro():
-    print("CATCAT saying intro")
+    logger.info("Saying intro")
     os.system("mpg123 -a plughw:1,0 catwelcome2.mp3")
 
     
