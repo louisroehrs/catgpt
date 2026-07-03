@@ -1,0 +1,29 @@
+
+
+
+Talking Cats   
+
+Building a Voice AI covered in fur...
+
+
+
+
+Story:
+
+My daughter brought me her cat that she really loved and wanted to make it work again.  I looked at it, knew about speech-to-text algorithms, openAI completion API, and text-to-speech and it dawned on me.
+
+
+I can make this thing talk!
+
+
+Ok, I dropped a bunch of terms there, we will walk through them bit by bit.
+
+
+3 parts of a voice AI platform.
+
+Instilling kitten knowledge is a whole other topic and we might just go there.
+
+
+As a system engineer, I like to start with a block diagram.
+
+
