@@ -286,4 +286,28 @@ USB:
 
 
 
-# importing sounddevice stops all the ALSA messages.  
+# importing sounddevice stops all the ALSA messages.
+
+
+
+#### Switching to piper for local tts for faster responses.
+
+Curl won't work.
+
+Browse to https://github.com/rhasspy/piper and get the release for 2023.11.14-2/piper_linux_arm7l.tar.gz for raspberry pi 2 model b
+
+
+Download. Extract to piper folder.
+
+Get a voice model from huggingface with browser.
+
+wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/low/en_US-lessac-low.onnx
+wget https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/lessac/low/en_US-lessac-low.onnx.json
+
+
+Test.
+echo "woof" | ./piper -m en_US-lessac-low.onnx --debug
+Spits out a file.
+aplay the timestamped file.
+
+
