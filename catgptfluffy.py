@@ -33,6 +33,7 @@ import threading
 import asyncio
 
 import pyaudio
+import sounddevice  # noqa: F401  # removes ALSA error logging (matches catgptsinglecat.py)
 import websockets
 import speech_recognition as sr
 
@@ -41,6 +42,10 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 MODEL = os.getenv("CATGPT_MODEL", "gpt-realtime-mini")
 VOICE = os.getenv("CATGPT_VOICE", "verse")
 MIC_INDEX = int(os.getenv("MIC_INDEX", "1"))
+# catgptsinglecat.py plays out on ALSA "plughw:1,0" (card 1). PyAudio addresses
+# devices by index, so route playback to that same USB card via env override.
+OUTPUT_INDEX = int(os.getenv("OUTPUT_INDEX", "1"))
+ENERGY_THRESHOLD = 200  # matches catgptsinglecat.py
 
 WAKE_WORD = "fluffy cat"
 REALTIME_URL = f"wss://api.openai.com/v1/realtime?model={MODEL}"
@@ -66,20 +71,20 @@ CONVERSATION_IDLE_SECONDS = 20
 def wait_for_wake_word():
     """Block until the user says the wake word. Runs locally on the Pi.
 
-    Uses SpeechRecognition's free Google recognizer for a quick phrase check.
-    Swap recognize_google for recognize_sphinx (pocketsphinx) if you want a
-    fully offline wake word with no network dependency while idle.
+    Uses SpeechRecognition's OpenAI recognizer for the phrase check (same as
+    catgptsinglecat.py). Swap recognize_openai for recognize_sphinx
+    (pocketsphinx) if you want a fully offline wake word while idle.
     """
     recognizer = sr.Recognizer()
-    recognizer.energy_threshold = 200
+    recognizer.energy_threshold = ENERGY_THRESHOLD
     mic = sr.Microphone(device_index=MIC_INDEX)
 
     print(f'Sleeping. Say "{WAKE_WORD}" to wake me up...')
     while True:
         with mic as source:
-            audio = recognizer.listen(source, phrase_time_limit=4)
+            audio = recognizer.listen(source)
         try:
-            heard = recognizer.recognize_google(audio).lower()
+            heard = recognizer.recognize_openai(audio).lower()
         except sr.UnknownValueError:
             continue
         except sr.RequestError as e:
@@ -108,6 +113,7 @@ class RealtimeSession:
             channels=CHANNELS,
             rate=SAMPLE_RATE,
             output=True,
+            output_device_index=OUTPUT_INDEX,
         )
         while not self.stop.is_set():
             try:
